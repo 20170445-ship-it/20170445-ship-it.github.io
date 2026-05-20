@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAPS AI Fitness Coach 2.0</title>
+<title>PAPS AI Coach</title>
 
 <style>
 body{
   font-family:sans-serif;
-  margin:0;
   background:#f1f5f9;
+  margin:0;
 }
 
 header{
@@ -27,9 +27,7 @@ header{
   border-radius:15px;
 }
 
-h2{
-  color:#1d4ed8;
-}
+h2{ color:#1d4ed8; }
 
 label{
   display:block;
@@ -54,11 +52,6 @@ button{
   border:none;
   border-radius:10px;
   font-size:16px;
-  cursor:pointer;
-}
-
-button:hover{
-  background:#1e40af;
 }
 
 .result{
@@ -76,14 +69,13 @@ button:hover{
   border-radius:10px;
 }
 </style>
-
 </head>
 
 <body>
 
 <header>
-<h1>🏃 PAPS AI Fitness Coach 2.0</h1>
-<p>학교 맞춤 체력 분석 + 7일 성장 프로그램</p>
+<h1>🏫 PAPS AI Fitness Coach</h1>
+<p>정확한 PAPS 기준 분석 + 학교 맞춤 운동 추천</p>
 </header>
 
 <div class="container">
@@ -93,31 +85,31 @@ button:hover{
 <label>윗몸말아올리기 (회)</label>
 <input id="situp">
 
-<label>오래달리기 (분)</label>
+<label>왕복오래달리기 (횟수)</label>
 <input id="run">
 
-<label>유연성 (cm)</label>
+<label>앉아윗몸앞으로굽히기 (cm)</label>
 <input id="flex">
 
-<label>스마트폰 사용 (시간)</label>
+<label>스마트폰 사용 시간 (시간)</label>
 <input id="phone">
 
-<button onclick="analyze()">AI 분석 시작</button>
+<button onclick="analyze()">분석하기</button>
 
 <div class="result" id="result">
 
 <div class="box">
-<h3>📊 현재 상태</h3>
+<h3>📊 종합 상태</h3>
 <p id="status"></p>
 </div>
 
 <div class="box">
-<h3>⚠ 부족한 부분</h3>
+<h3>⚠ 부족 분석</h3>
 <p id="weak"></p>
 </div>
 
 <div class="box">
-<h3>🏫 학교 운동 추천</h3>
+<h3>🏃 학교 운동 처방</h3>
 <p id="exercise"></p>
 </div>
 
@@ -127,12 +119,12 @@ button:hover{
 </div>
 
 <div class="box">
-<h3>📅 7일 성장 프로그램</h3>
+<h3>📅 7일 개선 프로그램</h3>
 <p id="plan"></p>
 </div>
 
 <div class="box">
-<h3>📈 예상 변화</h3>
+<h3>📈 변화 예측</h3>
 <p id="change"></p>
 </div>
 
@@ -156,53 +148,54 @@ let phoneTask="";
 let plan="";
 let change="";
 
-// 근력
+/* 근력 */
 if(situp < 30){
 status += "근력 부족 / ";
-weak += "코어 근육 약함, 자세 불안정 위험<br>";
-exercise += "플랭크 30초×3, 스쿼트 15회×3, 계단 5회 반복<br>";
-} else {
+weak += "코어 약함 → 자세 불안정 가능<br>";
+exercise += "플랭크 30초×3, 스쿼트 15회×3, 의자 스쿼트 10분<br>";
+}else{
 status += "근력 양호 / ";
 }
 
-// 심폐
-if(run > 10){
+/* 심폐 (왕복오래달리기) */
+if(run < 30){
 status += "심폐 부족 / ";
-weak += "지구력 낮음, 쉽게 피로<br>";
-exercise += "200m 걷기 + 200m 달리기 5세트 (20분)<br>";
-} else {
+weak += "지구력 부족 → 쉽게 피로<br>";
+exercise += "운동장 200m 걷기 + 200m 뛰기 5세트 (20분)<br>";
+}else{
 status += "심폐 양호 / ";
 }
 
-// 유연성
+/* 유연성 */
 if(flex < 10){
 status += "유연성 부족";
-weak += "근육 경직, 허리 부담 증가<br>";
-exercise += "목/허리 스트레칭 10분, 햄스트링 20초×5<br>";
+weak += "근육 경직 → 허리 부담 증가<br>";
+exercise += "햄스트링 20초×5, 허리 스트레칭 10분<br>";
 }
 
-// 스마트폰
+/* 스마트폰 */
 phoneTask =
-`스마트폰 ${phone}시간 → 운동 미션<br>
+`스마트폰 ${phone}시간 기반 미션<br>
 - 스쿼트 ${phone*15}회<br>
 - 플랭크 ${phone*30}초<br>
-- 걷기 ${phone*10}분`;
+- 걷기 ${phone*10}분<br>
+- 계단 5층 3회`;
 
-// 7일 프로그램
+/* 7일 계획 */
 plan =
-`DAY1 걷기 15분 + 스트레칭<br>
-DAY2 계단 10분 + 코어 운동<br>
-DAY3 인터벌 달리기 15분<br>
+`DAY1 걷기 + 스트레칭<br>
+DAY2 계단 운동<br>
+DAY3 인터벌 달리기<br>
 DAY4 회복 스트레칭<br>
-DAY5 근력 운동 강화<br>
-DAY6 1km 달리기<br>
+DAY5 근력 운동<br>
+DAY6 1km 걷기/달리기<br>
 DAY7 기록 측정`;
 
-// 변화 예측
+/* 변화 */
 change =
 `1주: 체력 회복 시작<br>
-2주: 달리기 능력 향상<br>
-3주: 자세 안정 + 지구력 증가`;
+2주: 왕복달리기 기록 증가<br>
+3주: 자세 안정 + 지구력 상승`;
 
 document.getElementById("status").innerHTML=status;
 document.getElementById("weak").innerHTML=weak;
