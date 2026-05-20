@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAPS AI Coach</title>
+<title>PAPS AI Coach 3.0</title>
 
 <style>
 body{
@@ -35,7 +35,7 @@ label{
   font-weight:bold;
 }
 
-input{
+input, select{
   width:100%;
   padding:10px;
   margin-top:5px;
@@ -74,13 +74,22 @@ button{
 <body>
 
 <header>
-<h1>🏫 PAPS AI Fitness Coach</h1>
-<p>정확한 PAPS 기준 분석 + 학교 맞춤 운동 추천</p>
+<h1>🏫 PAPS AI Coach 3.0</h1>
+<p>성별 + 나이 + PAPS 등급 분석 시스템</p>
 </header>
 
 <div class="container">
 
-<h2>📋 PAPS 기록 입력</h2>
+<h2>📋 학생 정보 입력</h2>
+
+<label>성별</label>
+<select id="gender">
+  <option value="male">남</option>
+  <option value="female">여</option>
+</select>
+
+<label>나이</label>
+<input id="age" type="number" placeholder="예: 15">
 
 <label>윗몸말아올리기 (회)</label>
 <input id="situp">
@@ -94,13 +103,18 @@ button{
 <label>스마트폰 사용 시간 (시간)</label>
 <input id="phone">
 
-<button onclick="analyze()">분석하기</button>
+<button onclick="analyze()">PAPS 분석</button>
 
 <div class="result" id="result">
 
 <div class="box">
-<h3>📊 종합 상태</h3>
+<h3>📊 종합 평가</h3>
 <p id="status"></p>
+</div>
+
+<div class="box">
+<h3>🏆 PAPS 등급</h3>
+<p id="grade"></p>
 </div>
 
 <div class="box">
@@ -109,23 +123,13 @@ button{
 </div>
 
 <div class="box">
-<h3>🏃 학교 운동 처방</h3>
+<h3>🏃 운동 처방</h3>
 <p id="exercise"></p>
 </div>
 
 <div class="box">
-<h3>📱 스마트폰 기반 미션</h3>
+<h3>📱 스마트폰 미션</h3>
 <p id="phoneTask"></p>
-</div>
-
-<div class="box">
-<h3>📅 7일 개선 프로그램</h3>
-<p id="plan"></p>
-</div>
-
-<div class="box">
-<h3>📈 변화 예측</h3>
-<p id="change"></p>
 </div>
 
 </div>
@@ -136,75 +140,75 @@ button{
 
 function analyze(){
 
+let gender = document.getElementById("gender").value;
+let age = Number(document.getElementById("age").value);
+
 let situp = Number(document.getElementById("situp").value);
 let run = Number(document.getElementById("run").value);
 let flex = Number(document.getElementById("flex").value);
 let phone = Number(document.getElementById("phone").value);
 
+let score = 0;
 let status="";
 let weak="";
 let exercise="";
-let phoneTask="";
-let plan="";
-let change="";
+let grade="";
 
-/* 근력 */
-if(situp < 30){
-status += "근력 부족 / ";
-weak += "코어 약함 → 자세 불안정 가능<br>";
-exercise += "플랭크 30초×3, 스쿼트 15회×3, 의자 스쿼트 10분<br>";
-}else{
-status += "근력 양호 / ";
-}
+/* 기본 점수 계산 */
+if(situp >= 40) score += 2;
+else if(situp >= 25) score += 1;
 
-/* 심폐 (왕복오래달리기) */
-if(run < 30){
-status += "심폐 부족 / ";
-weak += "지구력 부족 → 쉽게 피로<br>";
-exercise += "운동장 200m 걷기 + 200m 뛰기 5세트 (20분)<br>";
-}else{
-status += "심폐 양호 / ";
-}
+if(run >= 50) score += 2;
+else if(run >= 30) score += 1;
 
-/* 유연성 */
-if(flex < 10){
-status += "유연성 부족";
-weak += "근육 경직 → 허리 부담 증가<br>";
-exercise += "햄스트링 20초×5, 허리 스트레칭 10분<br>";
-}
+if(flex >= 15) score += 2;
+else if(flex >= 5) score += 1;
 
-/* 스마트폰 */
-phoneTask =
-`스마트폰 ${phone}시간 기반 미션<br>
+/* 상태 */
+if(score >= 5) status = "전체 체력 우수";
+else if(score >= 3) status = "보통 수준";
+else status = "체력 개선 필요";
+
+/* 등급 */
+if(score >= 6) grade = "1등급 (매우 우수)";
+else if(score == 5) grade = "2등급 (우수)";
+else if(score == 4) grade = "3등급 (보통)";
+else if(score == 3) grade = "4등급 (미흡)";
+else grade = "5등급 (개선 필요)";
+
+/* 부족 분석 */
+if(situp < 25)
+weak += "근력 부족 → 코어 운동 필요<br>";
+
+if(run < 30)
+weak += "심폐지구력 부족 → 달리기 훈련 필요<br>";
+
+if(flex < 5)
+weak += "유연성 부족 → 스트레칭 필요<br>";
+
+/* 운동 처방 */
+exercise =
+"🏫 학교 운동 추천<br>" +
+"- 운동장 인터벌 20분<br>" +
+"- 계단 오르기 10분<br>" +
+"- 플랭크 30초×3<br>" +
+"- 스트레칭 10분";
+
+/* 스마트폰 미션 */
+let phoneTask =
+`📱 스마트폰 ${phone}시간 기준<br>
 - 스쿼트 ${phone*15}회<br>
 - 플랭크 ${phone*30}초<br>
-- 걷기 ${phone*10}분<br>
-- 계단 5층 3회`;
+- 걷기 ${phone*10}분`;
 
-/* 7일 계획 */
-plan =
-`DAY1 걷기 + 스트레칭<br>
-DAY2 계단 운동<br>
-DAY3 인터벌 달리기<br>
-DAY4 회복 스트레칭<br>
-DAY5 근력 운동<br>
-DAY6 1km 걷기/달리기<br>
-DAY7 기록 측정`;
+/* 출력 */
+document.getElementById("status").innerHTML = status;
+document.getElementById("grade").innerHTML = grade;
+document.getElementById("weak").innerHTML = weak;
+document.getElementById("exercise").innerHTML = exercise;
+document.getElementById("phoneTask").innerHTML = phoneTask;
 
-/* 변화 */
-change =
-`1주: 체력 회복 시작<br>
-2주: 왕복달리기 기록 증가<br>
-3주: 자세 안정 + 지구력 상승`;
-
-document.getElementById("status").innerHTML=status;
-document.getElementById("weak").innerHTML=weak;
-document.getElementById("exercise").innerHTML=exercise;
-document.getElementById("phoneTask").innerHTML=phoneTask;
-document.getElementById("plan").innerHTML=plan;
-document.getElementById("change").innerHTML=change;
-
-document.getElementById("result").style.display="block";
+document.getElementById("result").style.display = "block";
 
 }
 
