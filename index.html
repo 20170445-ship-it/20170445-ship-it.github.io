@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Fit Coach</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #2563eb;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 15px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .result {
+      margin-top: 30px;
+      background: #dbeafe;
+      padding: 20px;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .challenge {
+      margin-top: 20px;
+      background: #dcfce7;
+      padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏃 School Fit Coach</h1>
+  <p>PAPS 기록과 생활 습관을 분석하는 AI 운동 추천 프로그램</p>
+</header>
+
+<div class="container">
+
+  <h2>📋 학생 정보 입력</h2>
+
+  <label>심폐지구력 점수</label>
+  <input type="number" id="cardio">
+
+  <label>근력 점수</label>
+  <input type="number" id="strength">
+
+  <label>유연성 점수</label>
+  <input type="number" id="flexibility">
+
+  <label>하루 스마트폰 사용 시간 (시간)</label>
+  <input type="number" id="phone">
+
+  <button onclick="analyzeData()">운동 추천 받기</button>
+
+  <div class="result" id="resultBox">
+    <h2>🤖 AI 분석 결과</h2>
+
+    <p id="analysis"></p>
+
+    <div class="challenge" id="challenge"></div>
+  </div>
+
+</div>
+
+<script>
+
+function analyzeData() {
+
+  const cardio = parseInt(document.getElementById('cardio').value);
+  const strength = parseInt(document.getElementById('strength').value);
+  const flexibility = parseInt(document.getElementById('flexibility').value);
+  const phone = parseInt(document.getElementById('phone').value);
+
+  let result = "";
+  let challenge = "";
+
+  // 심폐지구력 분석
+  if(cardio < 60){
+    result += "🫀 심폐지구력이 부족합니다.<br>";
+    result += "→ 운동장 걷기와 인터벌 달리기를 추천합니다.<br><br>";
+  } else {
+    result += "🫀 심폐지구력이 좋습니다!<br><br>";
+  }
+
+  // 근력 분석
+  if(strength < 60){
+    result += "💪 근력이 부족합니다.<br>";
+    result += "→ 플랭크와 스쿼트를 추천합니다.<br><br>";
+  } else {
+    result += "💪 근력이 좋습니다!<br><br>";
+  }
+
+  // 유연성 분석
+  if(flexibility < 60){
+    result += "🤸 유연성이 부족합니다.<br>";
+    result += "→ 쉬는 시간 스트레칭을 추천합니다.<br><br>";
+  } else {
+    result += "🤸 유연성이 좋습니다!<br><br>";
+  }
+
+  // 챌린지 기능
+  challenge =
+  "📱 오늘의 챌린지<br><br>" +
+  "스마트폰 사용 시간: " + phone + "시간<br>" +
+  "➡ 스쿼트 " + (phone * 10) + "회<br>" +
+  "➡ 플랭크 " + (phone * 20) + "초 도전!";
+
+  document.getElementById("analysis").innerHTML = result;
+  document.getElementById("challenge").innerHTML = challenge;
+
+  document.getElementById("resultBox").style.display = "block";
+}
+
+</script>
+
+</body>
+</html>
