@@ -1,329 +1,217 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI School Health Coach</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAPS AI Fitness Coach 2.0</title>
 
-  <style>
+<style>
+body{
+  font-family:sans-serif;
+  margin:0;
+  background:#f1f5f9;
+}
 
-    body{
-      font-family: sans-serif;
-      background:#eef6ff;
-      margin:0;
-      padding:0;
-      color:#1e293b;
-    }
+header{
+  background:#1d4ed8;
+  color:white;
+  text-align:center;
+  padding:25px;
+}
 
-    header{
-      background:#2563eb;
-      color:white;
-      text-align:center;
-      padding:30px;
-    }
+.container{
+  max-width:900px;
+  margin:20px auto;
+  background:white;
+  padding:25px;
+  border-radius:15px;
+}
 
-    header h1{
-      margin:0;
-      font-size:40px;
-    }
+h2{
+  color:#1d4ed8;
+}
 
-    .container{
-      width:90%;
-      max-width:1000px;
-      margin:30px auto;
-      background:white;
-      padding:30px;
-      border-radius:20px;
-      box-shadow:0 0 15px rgba(0,0,0,0.1);
-    }
+label{
+  display:block;
+  margin-top:15px;
+  font-weight:bold;
+}
 
-    h2{
-      color:#2563eb;
-    }
+input{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+}
 
-    label{
-      display:block;
-      margin-top:18px;
-      font-weight:bold;
-    }
+button{
+  width:100%;
+  margin-top:20px;
+  padding:15px;
+  background:#1d4ed8;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+}
 
-    input{
-      width:100%;
-      padding:12px;
-      border-radius:10px;
-      border:1px solid #cbd5e1;
-      margin-top:5px;
-    }
+button:hover{
+  background:#1e40af;
+}
 
-    button{
-      width:100%;
-      margin-top:30px;
-      padding:16px;
-      border:none;
-      border-radius:12px;
-      background:#2563eb;
-      color:white;
-      font-size:18px;
-      cursor:pointer;
-    }
+.result{
+  margin-top:20px;
+  padding:20px;
+  background:#e0f2fe;
+  border-radius:10px;
+  display:none;
+}
 
-    button:hover{
-      background:#1d4ed8;
-    }
-
-    .result{
-      margin-top:30px;
-      padding:25px;
-      background:#dbeafe;
-      border-radius:15px;
-      display:none;
-    }
-
-    .section{
-      background:white;
-      padding:20px;
-      border-radius:12px;
-      margin-top:20px;
-    }
-
-    .danger{
-      color:#dc2626;
-      font-weight:bold;
-    }
-
-    .good{
-      color:#16a34a;
-      font-weight:bold;
-    }
-
-    ul{
-      line-height:1.8;
-    }
-
-  </style>
+.box{
+  background:white;
+  padding:15px;
+  margin-top:15px;
+  border-radius:10px;
+}
+</style>
 
 </head>
 
 <body>
 
 <header>
-  <h1>🏃 AI School Health Coach</h1>
-  <p>PAPS 기록 + 생활 습관 분석 기반 학교 맞춤 운동 추천 시스템</p>
+<h1>🏃 PAPS AI Fitness Coach 2.0</h1>
+<p>학교 맞춤 체력 분석 + 7일 성장 프로그램</p>
 </header>
 
 <div class="container">
 
-  <h2>📋 실제 PAPS 기록 입력</h2>
+<h2>📋 PAPS 기록 입력</h2>
 
-  <label>윗몸말아올리기 (1분 동안 몇 회?)</label>
-  <input type="number" id="situp" placeholder="예: 25">
+<label>윗몸말아올리기 (회)</label>
+<input id="situp">
 
-  <label>오래달리기 (몇 분 걸렸나요?)</label>
-  <input type="number" id="run" placeholder="예: 10">
+<label>오래달리기 (분)</label>
+<input id="run">
 
-  <label>앉아윗몸앞으로굽히기 (cm)</label>
-  <input type="number" id="flex" placeholder="예: 5">
+<label>유연성 (cm)</label>
+<input id="flex">
 
-  <label>하루 스마트폰 사용 시간 (시간)</label>
-  <input type="number" id="phone" placeholder="예: 5">
+<label>스마트폰 사용 (시간)</label>
+<input id="phone">
 
-  <button onclick="analyzeHealth()">AI 건강 분석 받기</button>
+<button onclick="analyze()">AI 분석 시작</button>
 
-  <div class="result" id="resultBox">
+<div class="result" id="result">
 
-    <h2>🤖 AI 분석 결과</h2>
+<div class="box">
+<h3>📊 현재 상태</h3>
+<p id="status"></p>
+</div>
 
-    <div class="section">
-      <h3>📊 현재 건강 상태</h3>
-      <p id="healthResult"></p>
-    </div>
+<div class="box">
+<h3>⚠ 부족한 부분</h3>
+<p id="weak"></p>
+</div>
 
-    <div class="section">
-      <h3>⚠ 부족한 부분 & 개선 설명</h3>
-      <p id="weakness"></p>
-    </div>
+<div class="box">
+<h3>🏫 학교 운동 추천</h3>
+<p id="exercise"></p>
+</div>
 
-    <div class="section">
-      <h3>🏫 학교 맞춤 운동 추천</h3>
-      <p id="exercise"></p>
-    </div>
+<div class="box">
+<h3>📱 스마트폰 기반 미션</h3>
+<p id="phoneTask"></p>
+</div>
 
-    <div class="section">
-      <h3>📱 스마트폰 사용 기반 챌린지</h3>
-      <p id="phoneChallenge"></p>
-    </div>
+<div class="box">
+<h3>📅 7일 성장 프로그램</h3>
+<p id="plan"></p>
+</div>
 
-    <div class="section">
-      <h3>📅 7일 운동 계획</h3>
-      <p id="plan"></p>
-    </div>
+<div class="box">
+<h3>📈 예상 변화</h3>
+<p id="change"></p>
+</div>
 
-    <div class="section">
-      <h3>📈 예상 변화 분석</h3>
-      <p id="change"></p>
-    </div>
-
-  </div>
+</div>
 
 </div>
 
 <script>
 
-function analyzeHealth(){
+function analyze(){
 
-  const situp = parseInt(document.getElementById("situp").value);
-  const run = parseInt(document.getElementById("run").value);
-  const flex = parseInt(document.getElementById("flex").value);
-  const phone = parseInt(document.getElementById("phone").value);
+let situp = Number(document.getElementById("situp").value);
+let run = Number(document.getElementById("run").value);
+let flex = Number(document.getElementById("flex").value);
+let phone = Number(document.getElementById("phone").value);
 
-  let health = "";
-  let weak = "";
-  let exercise = "";
-  let challenge = "";
-  let plan = "";
-  let change = "";
+let status="";
+let weak="";
+let exercise="";
+let phoneTask="";
+let plan="";
+let change="";
 
-  // 근력 분석
-  if(situp < 30){
+// 근력
+if(situp < 30){
+status += "근력 부족 / ";
+weak += "코어 근육 약함, 자세 불안정 위험<br>";
+exercise += "플랭크 30초×3, 스쿼트 15회×3, 계단 5회 반복<br>";
+} else {
+status += "근력 양호 / ";
+}
 
-    health += "💪 근력이 부족한 상태입니다.<br>";
+// 심폐
+if(run > 10){
+status += "심폐 부족 / ";
+weak += "지구력 낮음, 쉽게 피로<br>";
+exercise += "200m 걷기 + 200m 달리기 5세트 (20분)<br>";
+} else {
+status += "심폐 양호 / ";
+}
 
-    weak += `
-    복부와 코어 근육의 힘이 부족하여 오래 앉아있을 때 자세가 무너질 가능성이 있습니다.<br>
-    또한 허리 피로와 체력 저하가 빨리 나타날 수 있습니다.<br><br>
-    `;
+// 유연성
+if(flex < 10){
+status += "유연성 부족";
+weak += "근육 경직, 허리 부담 증가<br>";
+exercise += "목/허리 스트레칭 10분, 햄스트링 20초×5<br>";
+}
 
-    exercise += `
-    ✅ 추천 운동<br>
-    - 점심시간 이후 운동장 걷기 15분<br>
-    - 플랭크 30초 × 3세트<br>
-    - 교실 의자 스쿼트 15회 × 3세트<br>
-    - 학교 계단 3층~1층 왕복 5회<br><br>
-    `;
+// 스마트폰
+phoneTask =
+`스마트폰 ${phone}시간 → 운동 미션<br>
+- 스쿼트 ${phone*15}회<br>
+- 플랭크 ${phone*30}초<br>
+- 걷기 ${phone*10}분`;
 
-  } else {
+// 7일 프로그램
+plan =
+`DAY1 걷기 15분 + 스트레칭<br>
+DAY2 계단 10분 + 코어 운동<br>
+DAY3 인터벌 달리기 15분<br>
+DAY4 회복 스트레칭<br>
+DAY5 근력 운동 강화<br>
+DAY6 1km 달리기<br>
+DAY7 기록 측정`;
 
-    health += "💪 근력이 좋은 상태입니다.<br>";
+// 변화 예측
+change =
+`1주: 체력 회복 시작<br>
+2주: 달리기 능력 향상<br>
+3주: 자세 안정 + 지구력 증가`;
 
-  }
+document.getElementById("status").innerHTML=status;
+document.getElementById("weak").innerHTML=weak;
+document.getElementById("exercise").innerHTML=exercise;
+document.getElementById("phoneTask").innerHTML=phoneTask;
+document.getElementById("plan").innerHTML=plan;
+document.getElementById("change").innerHTML=change;
 
-  // 심폐지구력 분석
-  if(run > 8){
-
-    health += "🫀 심폐지구력이 부족합니다.<br>";
-
-    weak += `
-    오래달리기 기록이 느린 편으로 쉽게 숨이 차거나 오래 움직이기 힘들 가능성이 있습니다.<br>
-    체육 활동 중 지구력 저하가 발생할 수 있습니다.<br><br>
-    `;
-
-    exercise += `
-    ✅ 심폐지구력 향상 운동<br>
-    - 운동장 400m 걷기 → 200m 뛰기 반복 20분<br>
-    - 학교 운동장 바깥 라인 따라 천천히 조깅 1km<br>
-    - 계단 빠르게 오르기 10분<br><br>
-    `;
-
-  } else {
-
-    health += "🫀 심폐지구력이 좋은 상태입니다.<br>";
-
-  }
-
-  // 유연성 분석
-  if(flex < 10){
-
-    health += "🤸 유연성이 부족합니다.<br>";
-
-    weak += `
-    허벅지와 허리 근육이 뻣뻣할 가능성이 높습니다.<br>
-    오래 앉아 공부할 경우 허리 통증 위험이 증가할 수 있습니다.<br><br>
-    `;
-
-    exercise += `
-    ✅ 유연성 향상 운동<br>
-    - 쉬는시간 목 스트레칭 3분<br>
-    - 햄스트링 스트레칭 20초 × 5세트<br>
-    - 체육관 벽 밀기 스트레칭 10분<br>
-    - 수업 전후 허리 돌리기 운동<br><br>
-    `;
-
-  } else {
-
-    health += "🤸 유연성이 좋은 상태입니다.<br>";
-
-  }
-
-  // 스마트폰 챌린지
-
-  challenge = `
-  오늘 스마트폰 사용 시간은 ${phone}시간입니다.<br><br>
-
-  📱 AI 챌린지 추천<br>
-  - 스쿼트 ${phone * 15}회<br>
-  - 플랭크 ${phone * 30}초<br>
-  - 학교 운동장 걷기 ${phone * 10}분<br>
-  - 엘리베이터 대신 계단 이용하기<br>
-  - 자기 전 스트레칭 ${phone * 5}분 수행<br><br>
-
-  스마트폰 사용 시간이 길수록 목 건강과 자세가 나빠질 가능성이 있으므로
-  자세 교정 운동이 꼭 필요합니다.
-  `;
-
-  // 7일 계획
-
-  plan = `
-  📅 DAY 1<br>
-  운동장 1km 걷기 + 플랭크 3세트<br><br>
-
-  📅 DAY 2<br>
-  계단 오르기 15분 + 스트레칭 10분<br><br>
-
-  📅 DAY 3<br>
-  운동장 인터벌 달리기 20분<br><br>
-
-  📅 DAY 4<br>
-  쉬는시간 스트레칭 집중 실시<br><br>
-
-  📅 DAY 5<br>
-  스쿼트 20회 × 3세트 + 조깅 15분<br><br>
-
-  📅 DAY 6<br>
-  학교 운동장 2km 걷기 챌린지<br><br>
-
-  📅 DAY 7<br>
-  전체 기록 측정 및 변화 확인
-  `;
-
-  // 변화 예상
-
-  change = `
-  📈 예상 변화<br><br>
-
-  ✔ 1주 후<br>
-  - 오래달리기 기록 개선 가능<br>
-  - 자세 안정성 증가<br>
-  - 허리 피로 감소<br><br>
-
-  ✔ 2~3주 후<br>
-  - 계단 오르기 시 숨참 감소<br>
-  - 플랭크 유지 시간 증가<br>
-  - 유연성 증가 가능<br><br>
-
-  ✔ 꾸준히 수행할 경우<br>
-  - 체육 활동 능력 향상<br>
-  - 집중력 증가<br>
-  - 스마트폰 의존 감소 효과 기대
-  `;
-
-  document.getElementById("healthResult").innerHTML = health;
-  document.getElementById("weakness").innerHTML = weak;
-  document.getElementById("exercise").innerHTML = exercise;
-  document.getElementById("phoneChallenge").innerHTML = challenge;
-  document.getElementById("plan").innerHTML = plan;
-  document.getElementById("change").innerHTML = change;
-
-  document.getElementById("resultBox").style.display = "block";
+document.getElementById("result").style.display="block";
 
 }
 
