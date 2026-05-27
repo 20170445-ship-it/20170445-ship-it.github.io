@@ -1,218 +1,469 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAPS AI Coach 3.0</title>
-
-<style>
-body{
-  font-family:sans-serif;
-  background:#f1f5f9;
-  margin:0;
-}
-
-header{
-  background:#1d4ed8;
-  color:white;
-  text-align:center;
-  padding:25px;
-}
-
-.container{
-  max-width:900px;
-  margin:20px auto;
-  background:white;
-  padding:25px;
-  border-radius:15px;
-}
-
-h2{ color:#1d4ed8; }
-
-label{
-  display:block;
-  margin-top:15px;
-  font-weight:bold;
-}
-
-input, select{
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  border-radius:8px;
-  border:1px solid #cbd5e1;
-}
-
-button{
-  width:100%;
-  margin-top:20px;
-  padding:15px;
-  background:#1d4ed8;
-  color:white;
-  border:none;
-  border-radius:10px;
-  font-size:16px;
-}
-
-.result{
-  margin-top:20px;
-  padding:20px;
-  background:#e0f2fe;
-  border-radius:10px;
-  display:none;
-}
-
-.box{
-  background:white;
-  padding:15px;
-  margin-top:15px;
-  border-radius:10px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스마트 헬스코치 & 스마트폰 디톡스 웹서비스</title>
+  <meta name="description" content="신체 BMI 지수, 가상 날씨 환경(기온, 습도, 미세먼지, 풍속), 그리고 스마트폰 스크린 타임을 실시간으로 연동하여 스마트 도파민 차단 운동 코스를 추천하고 관리해주는 지능형 헬스케어 웹서비스입니다.">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="coach_styles.css">
+  
+  <!-- FontAwesome Icons for modern HUD graphic layout -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
 
-<header>
-<h1>🏫 PAPS AI Coach 3.0</h1>
-<p>성별 + 나이 + PAPS 등급 분석 시스템</p>
-</header>
+  <div class="coach-container">
+    
+    <!-- Technical HUD Header -->
+    <header class="glass-board tech-header" id="techHeader">
+      <div class="header-logo">
+        <i class="fas fa-microchip"></i>
+        <span>NEO-FIT COACH</span>
+        <span class="tech-badge">DOPAMINE SHIELD v1.4</span>
+      </div>
+      <div class="header-meta">
+        <p><i class="far fa-calendar-alt"></i> 분석 시간: <span id="currentDate">2026-05-26</span></p>
+        <p style="font-size: 0.8rem; color: var(--accent-glow);">System: Online & Active</p>
+      </div>
+    </header>
 
-<div class="container">
+    <!-- Main Dynamic Layout Grid -->
+    <main class="coach-grid">
+      
+      <!-- Left Column: Inputs (Physical Specs & Screen Time Converter) -->
+      <div style="display: flex; flex-direction: column; gap: 2rem;">
+        
+        <!-- Section 1: User Specs Card (Height, Weight & BMI Engine) -->
+        <section class="glass-board" id="profileSpecsPanel">
+          <h2 class="panel-title"><i class="fas fa-user-circle"></i> 신체 정보 & 실시간 BMI 측정</h2>
+          
+          <div class="input-row">
+            <div class="input-cell">
+              <label for="userHeight">신장 (cm)</label>
+              <input type="number" id="userHeight" value="175" min="100" max="230" required>
+            </div>
+            <div class="input-cell">
+              <label for="userWeight">체중 (kg)</label>
+              <input type="number" id="userWeight" value="70" min="20" max="200" required>
+            </div>
+          </div>
 
-<h2>📋 학생 정보 입력</h2>
+          <div class="input-row">
+            <div class="input-cell">
+              <label for="userAge">나이 (세)</label>
+              <input type="number" id="userAge" value="17" min="10" max="100" required>
+            </div>
+            <div class="input-cell">
+              <label for="userGender">성별</label>
+              <select id="userGender">
+                <option value="남학생">남학생 ♂</option>
+                <option value="여학생">여학생 ♀</option>
+              </select>
+            </div>
+          </div>
 
-<label>성별</label>
-<select id="gender">
-  <option value="male">남</option>
-  <option value="female">여</option>
-</select>
+          <!-- PAPS Multi-Step Input UI -->
+          <div class="paps-section" style="margin-bottom: 1.5rem;">
+            <label style="display:block; font-size:0.82rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.75rem;">
+              <i class="fas fa-dumbbell" style="color:var(--primary-glow); margin-right:0.4rem;"></i>학교 체력검증 (PAPS) 종목 측정
+            </label>
 
-<label>나이</label>
-<input id="age" type="number" placeholder="예: 15">
+            <!-- Step 1: Category Pills -->
+            <div style="margin-bottom:0.9rem;">
+              <p style="font-size:0.78rem; color:var(--text-light); margin-bottom:0.5rem; opacity:0.7;">① 체력 카테고리 선택</p>
+              <div class="paps-category-pills" id="papsCategoryPills">
+                <button type="button" class="paps-pill" data-cat="cardio">
+                  <i class="fas fa-heartbeat"></i><span>심폐지구력</span>
+                </button>
+                <button type="button" class="paps-pill" data-cat="flexibility">
+                  <i class="fas fa-person-stretching"></i><span>유연성</span>
+                </button>
+                <button type="button" class="paps-pill" data-cat="strength">
+                  <i class="fas fa-hand-fist"></i><span>근력·근지구력</span>
+                </button>
+                <button type="button" class="paps-pill" data-cat="speed">
+                  <i class="fas fa-bolt"></i><span>순발력</span>
+                </button>
+                <button type="button" class="paps-pill" data-cat="body">
+                  <i class="fas fa-weight-scale"></i><span>체지방·신체조성</span>
+                </button>
+              </div>
+            </div>
 
-<label>윗몸말아올리기 (회)</label>
-<input id="situp">
+            <!-- Step 2: Exercise Selection (hidden until category chosen) -->
+            <div id="papsExerciseStep" style="display:none; margin-bottom:0.9rem;">
+              <p style="font-size:0.78rem; color:var(--text-light); margin-bottom:0.5rem; opacity:0.7;">② 측정 종목 선택</p>
+              <div class="paps-exercise-list" id="papsExerciseList">
+                <!-- injected by JS -->
+              </div>
+            </div>
 
-<label>왕복오래달리기 (횟수)</label>
-<input id="run">
+            <!-- Step 3: Value Input (hidden until exercise chosen) -->
+            <div id="papsValueStep" style="display:none;">
+              <p style="font-size:0.78rem; color:var(--text-light); margin-bottom:0.5rem; opacity:0.7;">③ 내 측정 수치 입력</p>
+              <div style="display:flex; align-items:center; gap:0.75rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:0.75rem 1rem;">
+                <i class="fas fa-keyboard" style="color:var(--accent-glow); font-size:1.1rem;"></i>
+                <input type="number" id="papsValueInput" min="0" step="0.01"
+                  style="flex:1; background:transparent; border:none; outline:none; color:var(--text-light); font-size:1.05rem; font-weight:700;"
+                  placeholder="수치 입력...">
+                <span id="papsUnit" style="color:var(--primary-glow); font-size:0.85rem; font-weight:700; white-space:nowrap;">—</span>
+              </div>
+              
+              <!-- Confirm Button for Saving PAPS Records -->
+              <button type="button" id="papsConfirmBtn" class="paps-confirm-btn">
+                <i class="fas fa-check-double"></i> 기록 저장 및 분석
+              </button>
 
-<label>앉아윗몸앞으로굽히기 (cm)</label>
-<input id="flex">
+              <!-- Grade result badge -->
+              <div id="papsGradeBadge" style="margin-top:0.65rem; display:none;">
+                <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.2); border-radius:8px; padding:0.55rem 0.9rem;">
+                  <span style="font-size:0.8rem; color:var(--text-muted);">측정 등급</span>
+                  <span id="papsGradeText" style="font-size:0.95rem; font-weight:800; color:var(--primary-glow);">—</span>
+                </div>
+              </div>
+            </div>
 
-<label>스마트폰 사용 시간 (시간)</label>
-<input id="phone">
+            <!-- Hidden original select (for JS compatibility) -->
+            <select id="papsWeakness" style="display:none;">
+              <option value="all">특별히 없음</option>
+              <option value="cardio">심폐지구력</option>
+              <option value="flexibility">유연성</option>
+              <option value="strength">근력 · 근지구력</option>
+              <option value="speed">순발력</option>
+              <option value="body">체지방 (신체조성)</option>
+            </select>
+          </div>
 
-<button onclick="analyze()">PAPS 분석</button>
+          <style>
+            .paps-category-pills {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.5rem;
+            }
+            .paps-pill {
+              display: flex;
+              align-items: center;
+              gap: 0.4rem;
+              padding: 0.42rem 0.85rem;
+              border-radius: 999px;
+              border: 1px solid rgba(255,255,255,0.15);
+              background: rgba(255,255,255,0.04);
+              color: var(--text-muted, #94a3b8);
+              font-size: 0.8rem;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              font-family: inherit;
+            }
+            .paps-pill:hover {
+              border-color: var(--primary-glow, #38bdf8);
+              color: var(--primary-glow, #38bdf8);
+              background: rgba(56,189,248,0.08);
+            }
+            .paps-pill.active {
+              border-color: var(--primary-glow, #38bdf8);
+              background: rgba(56,189,248,0.15);
+              color: var(--primary-glow, #38bdf8);
+              box-shadow: 0 0 12px rgba(56,189,248,0.2);
+            }
+            .paps-exercise-list {
+              display: flex;
+              flex-direction: column;
+              gap: 0.4rem;
+            }
+            .paps-exercise-btn {
+              display: flex;
+              align-items: center;
+              gap: 0.6rem;
+              padding: 0.5rem 0.9rem;
+              border-radius: 8px;
+              border: 1px solid rgba(255,255,255,0.1);
+              background: rgba(255,255,255,0.03);
+              color: var(--text-muted, #94a3b8);
+              font-size: 0.83rem;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.18s ease;
+              text-align: left;
+              font-family: inherit;
+            }
+            .paps-exercise-btn:hover {
+              border-color: var(--accent-glow, #06b6d4);
+              color: var(--accent-glow, #06b6d4);
+              background: rgba(6,182,212,0.07);
+            }
+            .paps-exercise-btn.active {
+              border-color: var(--accent-glow, #06b6d4);
+              background: rgba(6,182,212,0.12);
+              color: var(--accent-glow, #06b6d4);
+            }
+            .paps-exercise-btn .ex-icon {
+              width: 22px;
+              text-align: center;
+              font-size: 0.9rem;
+              opacity: 0.8;
+            }
+            #papsExerciseStep, #papsValueStep {
+              animation: papsStepIn 0.25s ease;
+            }
+            @keyframes papsStepIn {
+              from { opacity: 0; transform: translateY(6px); }
+              to   { opacity: 1; transform: translateY(0); }
+            }
+          </style>
 
-<div class="result" id="result">
+          <script>
+          <!-- PAPS UI Logic is consolidated in coach_app.js -->
+          </script>
 
-<div class="box">
-<h3>📊 종합 평가</h3>
-<p id="status"></p>
-</div>
+          <!-- Dynamic BMI scale visual bar -->
+          <div class="bmi-widget">
+            <div class="bmi-top">
+              <span class="bmi-title">체지방 (신체조성) · BMI (체질량지수)</span>
+              <span class="bmi-value-badge" id="bmiValue">22.86</span>
+            </div>
 
-<div class="box">
-<h3>🏆 PAPS 등급</h3>
-<p id="grade"></p>
-</div>
+            <div class="bmi-scale-bar">
+              <div class="bmi-segment bmi-seg-1" title="저체중 (< 18.5)"></div>
+              <div class="bmi-segment bmi-seg-2" title="정상 (18.5 ~ 22.9)"></div>
+              <div class="bmi-segment bmi-seg-3" title="과체중 (23 ~ 24.9)"></div>
+              <div class="bmi-segment bmi-seg-4" title="비만 (>= 25)"></div>
+            </div>
 
-<div class="box">
-<h3>⚠ 부족 분석</h3>
-<p id="weak"></p>
-</div>
+            <div class="bmi-indicator-container">
+              <div class="bmi-pin" id="bmiPin" style="left: 45%;">
+                ▲ 내 BMI (22.9)
+              </div>
+            </div>
 
-<div class="box">
-<h3>🏃 운동 처방</h3>
-<p id="exercise"></p>
-</div>
+            <p class="bmi-feedback-box" id="bmiFeedback">
+              정상 범위의 신체 스펙입니다.
+            </p>
+          </div>
+        </section>
 
-<div class="box">
-<h3>📱 스마트폰 미션</h3>
-<p id="phoneTask"></p>
-</div>
+        <!-- Section 1.5: PAPS & BMI Comprehensive Fitness Dashboard -->
+        <section class="glass-board" id="fitnessDashboardPanel">
+          <h2 class="panel-title"><i class="fas fa-chart-bar"></i> PAPS & BMI 종합 체력 대시보드</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            입력된 PAPS 체력 등급과 BMI 체성분 수치를 종합적으로 시각화한 대시보드입니다. 네온 게이지를 통해 나의 현재 피지컬 프로필을 확인하세요.
+          </p>
+          
+          <div class="dashboard-grid">
+            <!-- Cardio -->
+            <div class="dash-item" id="dashCardio">
+              <div class="dash-header">
+                <span class="dash-icon"><i class="fas fa-heartbeat" style="color: var(--primary-glow);"></i></span>
+                <span class="dash-label">심폐지구력</span>
+                <span class="dash-score-val" id="dashCardioVal">미측정</span>
+              </div>
+              <div class="dash-track">
+                <div class="dash-fill" id="dashCardioFill" style="width: 0%; background: var(--text-muted);"></div>
+              </div>
+              <div class="dash-grade-label" id="dashCardioGrade">—</div>
+            </div>
 
-</div>
+            <!-- Flexibility -->
+            <div class="dash-item" id="dashFlexibility">
+              <div class="dash-header">
+                <span class="dash-icon"><i class="fas fa-person-stretching" style="color: #a855f7;"></i></span>
+                <span class="dash-label">유연성</span>
+                <span class="dash-score-val" id="dashFlexibilityVal">미측정</span>
+              </div>
+              <div class="dash-track">
+                <div class="dash-fill" id="dashFlexibilityFill" style="width: 0%; background: var(--text-muted);"></div>
+              </div>
+              <div class="dash-grade-label" id="dashFlexibilityGrade">—</div>
+            </div>
 
-</div>
+            <!-- Strength/Endurance -->
+            <div class="dash-item" id="dashStrength">
+              <div class="dash-header">
+                <span class="dash-icon"><i class="fas fa-hand-fist" style="color: var(--warn-glow);"></i></span>
+                <span class="dash-label">근력·근지구력</span>
+                <span class="dash-score-val" id="dashStrengthVal">미측정</span>
+              </div>
+              <div class="dash-track">
+                <div class="dash-fill" id="dashStrengthFill" style="width: 0%; background: var(--text-muted);"></div>
+              </div>
+              <div class="dash-grade-label" id="dashStrengthGrade">—</div>
+            </div>
 
-<script>
+            <!-- Speed -->
+            <div class="dash-item" id="dashSpeed">
+              <div class="dash-header">
+                <span class="dash-icon"><i class="fas fa-bolt" style="color: #eab308;"></i></span>
+                <span class="dash-label">순발력</span>
+                <span class="dash-score-val" id="dashSpeedVal">미측정</span>
+              </div>
+              <div class="dash-track">
+                <div class="dash-fill" id="dashSpeedFill" style="width: 0%; background: var(--text-muted);"></div>
+              </div>
+              <div class="dash-grade-label" id="dashSpeedGrade">—</div>
+            </div>
 
-function analyze(){
+            <!-- Body Composition (BMI) -->
+            <div class="dash-item" id="dashBody">
+              <div class="dash-header">
+                <span class="dash-icon"><i class="fas fa-weight-scale" style="color: var(--accent-glow);"></i></span>
+                <span class="dash-label">체지방·BMI</span>
+                <span class="dash-score-val" id="dashBodyVal">계산 중</span>
+              </div>
+              <div class="dash-track">
+                <div class="dash-fill" id="dashBodyFill" style="width: 0%; background: var(--success-glow);"></div>
+              </div>
+              <div class="dash-grade-label" id="dashBodyGrade">정상</div>
+            </div>
+          </div>
+        </section>
 
-let gender = document.getElementById("gender").value;
-let age = Number(document.getElementById("age").value);
+        <!-- Section 2: Dopamine Swap Screen Time Converter -->
+        
 
-let situp = Number(document.getElementById("situp").value);
-let run = Number(document.getElementById("run").value);
-let flex = Number(document.getElementById("flex").value);
-let phone = Number(document.getElementById("phone").value);
 
-let score = 0;
-let status="";
-let weak="";
-let exercise="";
-let grade="";
+      </div>
 
-/* 기본 점수 계산 */
-if(situp >= 40) score += 2;
-else if(situp >= 25) score += 1;
+      <!-- Right Column: Outputs (Weather query & Recommended Exercise) -->
+      <div style="display: flex; flex-direction: column; gap: 2rem;">
+        
+        <!-- Section 3: Weather Inquiry Panel (기상청.csv 연동) -->
+        <section class="glass-board" id="weatherStationPanel">
+          <h2 class="panel-title"><i class="fas fa-cloud-sun"></i> 기상청 날씨 연동 운동 코치</h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.2rem;">
+            원하는 날짜(월/일)를 선택하면 기상청 관측 자료(2025년 8월 기준)의 평균 기온, 습도, 풍속과 함께 미세먼지 및 자외선 강도를 실시간으로 연동하여 맞춤형 실내외 운동 여부와 대안 지침을 처방합니다.
+          </p>
 
-if(run >= 50) score += 2;
-else if(run >= 30) score += 1;
+          <div class="date-selector-row" style="margin-bottom: 1.25rem;">
+            <div class="date-input-group">
+              <i class="far fa-calendar-check"></i>
+              <label for="weatherMonth" style="display:none;">월</label>
+              <select id="weatherMonth">
+                <option value="1">1월 (January)</option>
+                <option value="2">2월 (February)</option>
+                <option value="3">3월 (March)</option>
+                <option value="4">4월 (April)</option>
+                <option value="5">5월 (May)</option>
+                <option value="6">6월 (June)</option>
+                <option value="7">7월 (July)</option>
+                <option value="8" selected>8월 (August)</option>
+                <option value="9">9월 (September)</option>
+                <option value="10">10월 (October)</option>
+                <option value="11">11월 (November)</option>
+                <option value="12">12월 (December)</option>
+              </select>
+            </div>
+            <div class="date-input-group">
+              <i class="far fa-calendar-days"></i>
+              <label for="weatherDay" style="display:none;">일</label>
+              <select id="weatherDay">
+                <!-- Injected via JS dynamically -->
+              </select>
+            </div>
+          </div>
 
-if(flex >= 15) score += 2;
-else if(flex >= 5) score += 1;
+          <!-- Weather Indicators HUD -->
+          <div class="weather-hud-details">
+            <div class="weather-hud-item">
+              <i class="fas fa-thermometer-half weather-hud-icon" style="color: var(--warn-glow);"></i>
+              <span class="weather-hud-label">기온</span>
+              <div class="weather-hud-value"><span id="weatherTempDisp">--</span>°C</div>
+              <span class="weather-hud-status" id="weatherTempStatus" style="color: var(--text-muted);">대기 중</span>
+            </div>
+            
+            <div class="weather-hud-item">
+              <i class="fas fa-tint weather-hud-icon" style="color: var(--primary-glow);"></i>
+              <span class="weather-hud-label">습도</span>
+              <div class="weather-hud-value"><span id="weatherHumDisp">--</span>%</div>
+              <span class="weather-hud-status" id="weatherHumStatus" style="color: var(--text-muted);">대기 중</span>
+            </div>
 
-/* 상태 */
-if(score >= 5) status = "전체 체력 우수";
-else if(score >= 3) status = "보통 수준";
-else status = "체력 개선 필요";
+            <div class="weather-hud-item">
+              <i class="fas fa-wind weather-hud-icon" style="color: var(--text-muted);"></i>
+              <span class="weather-hud-label">풍속</span>
+              <div class="weather-hud-value"><span id="weatherWindDisp">--</span>m/s</div>
+              <span class="weather-hud-status" id="weatherWindStatus" style="color: var(--text-muted);">대기 중</span>
+            </div>
 
-/* 등급 */
-if(score >= 6) grade = "1등급 (매우 우수)";
-else if(score == 5) grade = "2등급 (우수)";
-else if(score == 4) grade = "3등급 (보통)";
-else if(score == 3) grade = "4등급 (미흡)";
-else grade = "5등급 (개선 필요)";
+            <!-- Precipitation Widget -->
+            <div class="weather-hud-item">
+              <i class="fas fa-cloud-showers-heavy weather-hud-icon" style="color: #60a5fa;" id="weatherRainIcon"></i>
+              <span class="weather-hud-label">강수량</span>
+              <div class="weather-hud-value"><span id="weatherRainDisp">--</span>mm</div>
+              <span class="weather-hud-status" id="weatherRainStatus" style="color: var(--text-muted);">대기 중</span>
+            </div>
 
-/* 부족 분석 */
-if(situp < 25)
-weak += "근력 부족 → 코어 운동 필요<br>";
+            <div class="weather-hud-item">
+              <i class="fas fa-smog weather-hud-icon" id="weatherDustIcon"></i>
+              <span class="weather-hud-label">미세먼지</span>
+              <div class="weather-hud-value" style="font-size:0.9rem;" id="weatherDustVal">--</div>
+              <span class="weather-hud-status" id="weatherDustStatus">대기 중</span>
+            </div>
 
-if(run < 30)
-weak += "심폐지구력 부족 → 달리기 훈련 필요<br>";
+            <div class="weather-hud-item">
+              <i class="fas fa-sun weather-hud-icon" id="weatherUvIcon"></i>
+              <span class="weather-hud-label">자외선 지수</span>
+              <div class="weather-hud-value" style="font-size:0.9rem;" id="weatherUvVal">--</div>
+              <span class="weather-hud-status" id="weatherUvStatus">대기 중</span>
+            </div>
+          </div>
 
-if(flex < 5)
-weak += "유연성 부족 → 스트레칭 필요<br>";
+          <!-- Dynamic calculated score widget banner -->
+          <div class="suitability-banner" id="weatherSuitabilityBanner">
+            <div class="suit-left">
+              <span class="suit-title">야외 운동 환경 적합도</span>
+              <span class="suit-score" id="suitabilityScore">--점</span>
+            </div>
+            <div class="suit-status-badge" id="suitabilityStatus">대기 중</div>
+          </div>
+          
+          <div class="weather-recommend-tip">
+            <i class="fas fa-circle-info"></i>
+            <span id="weatherAdvice">날짜를 선택하면 기상 분석을 기반으로 실외 운동 및 실내 대체 경로 팁을 알려줍니다.</span>
+          </div>
+        </section>
 
-/* 운동 처방 */
-exercise =
-"🏫 학교 운동 추천<br>" +
-"- 운동장 인터벌 20분<br>" +
-"- 계단 오르기 10분<br>" +
-"- 플랭크 30초×3<br>" +
-"- 스트레칭 10분";
+        <!-- Section 4: Recommended Exercise list cards & Checklists -->
+        <section class="glass-board" id="recommendationPanel">
+          <h2 class="panel-title"><i class="fas fa-running"></i> 실시간 스마트 맞춤형 운동 처방 카드</h2>
+          
+          <div id="exerciseContainer" class="recommended-list">
+            <!-- Populated dynamically via JS -->
+          </div>
 
-/* 스마트폰 미션 */
-let phoneTask =
-`📱 스마트폰 ${phone}시간 기준<br>
-- 스쿼트 ${phone*15}회<br>
-- 플랭크 ${phone*30}초<br>
-- 걷기 ${phone*10}분`;
+          <!-- Overall conversion shield progress bar -->
+          <div class="progress-panel">
+            <div class="progress-header">
+              <span style="font-weight: bold; color: var(--text-muted); font-size: 0.85rem;"><i class="fas fa-shield-halved" style="color: var(--accent-glow);"></i> 오늘 목표 보호막 충전율</span>
+              <span id="progressPercentage" style="font-weight: 800; color: var(--primary-glow);">0% 충전됨</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="detoxProgressFill"></div>
+            </div>
+          </div>
+        </section>
 
-/* 출력 */
-document.getElementById("status").innerHTML = status;
-document.getElementById("grade").innerHTML = grade;
-document.getElementById("weak").innerHTML = weak;
-document.getElementById("exercise").innerHTML = exercise;
-document.getElementById("phoneTask").innerHTML = phoneTask;
+      </div>
 
-document.getElementById("result").style.display = "block";
+    </main>
 
-}
+    <!-- FooterCopyright -->
+    <footer style="text-align: center; color: var(--text-light); font-size: 0.85rem; padding: 2rem 0;">
+      <p>© 2026 NEO-FIT 스마트 헬스코치 시스템. Pair-Programmed by Antigravity.</p>
+    </footer>
 
-</script>
+  </div>
 
+
+
+  <!-- External JS Script Files -->
+  <script src="coach_data.js"></script>
+  <script src="coach_app.js"></script>
+  
+  <script>
+    // Set current date in technical header
+    document.getElementById("currentDate").textContent = new Date().toISOString().split('T')[0];
+  </script>
 </body>
 </html>
