@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="서비스 프로젝트 기획서 작성 도구">
+  <title>Service Planner | 프로젝트 기획서</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-icon">S</span>
+    <div>
+      <strong>Service Planner</strong>
+      <small>PROJECT PLANNING WORKSPACE</small>
+    </div>
+  </div>
+  <div class="top-actions">
+    <span id="saveStatus">자동 저장 대기 중</span>
+    <button class="btn btn-outline" id="resetBtn">초기화</button>
+    <button class="btn btn-primary" id="exportBtn">기획서 다운로드 ↓</button>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="intro">
+    <div class="intro-tag">PROJECT WORKSPACE</div>
+    <h1>나만의 서비스 기획서 만들기</h1>
+    <p>서비스가 해결할 문제부터 핵심 기능과 기술 구현 방법까지 정리해 보세요.</p>
+  </section>
+
+  <div class="workspace">
+
+    <!-- 입력 영역 -->
+    <section class="editor">
+
+      <div class="section-heading">
+        <div>
+          <span class="step">STEP 01</span>
+          <h2>서비스 기본 정보</h2>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="serviceName">서비스(프로젝트) 이름</label>
+        <input id="serviceName" type="text"
+          placeholder="예: 건강·안전 정보 플랫폼">
+      </div>
+
+      <div class="field">
+        <label for="problem">어떤 문제를 해결하기 위한 서비스인가요?</label>
+        <textarea id="problem" rows="4"
+          placeholder="서비스를 기획하게 된 배경과 해결하고 싶은 문제를 작성하세요."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="target">주요 대상은 누구인가요?</label>
+        <textarea id="target" rows="3"
+          placeholder="예: 모든 사람, 노약자, 학생, 직장인 등"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-heading">
+        <div>
+          <span class="step">STEP 02</span>
+          <h2>핵심 기능</h2>
+          <p>서비스가 제공할 핵심 기능을 3개 이상 작성하세요.</p>
+        </div>
+        <span class="count" id="featureCount">0개</span>
+      </div>
+
+      <div id="featureList"></div>
+      <button class="btn btn-add" id="addFeature">＋ 핵심 기능 추가</button>
+
+      <div class="divider"></div>
+
+      <div class="section-heading">
+        <div>
+          <span class="step">STEP 03</span>
+          <h2>구현 기술 선택</h2>
+          <p>실제로 사용할 계획인 기술을 모두 선택하세요.</p>
+        </div>
+      </div>
+
+      <div class="tech-grid">
+        <label class="tech-option">
+          <input type="checkbox" name="tech" value="GitHub Pages">
+          <span><b>GitHub Pages</b><small>웹사이트 배포</small></span>
+        </label>
+        <label class="tech-option">
+          <input type="checkbox" name="tech" value="Gemini API">
+          <span><b>Gemini API</b><small>AI 대화 및 추천</small></span>
+        </label>
+        <label class="tech-option">
+          <input type="checkbox" name="tech" value="Plotly">
+          <span><b>Plotly</b><small>데이터 시각화</small></span>
+        </label>
+        <label class="tech-option">
+          <input type="checkbox" name="tech" value="공공데이터 Open API">
+          <span><b>공공데이터 Open API</b><small>공공 데이터 연동</small></span>
+        </label>
+        <label class="tech-option">
+          <input type="checkbox" name="tech" value="파이썬 라이브러리">
+          <span><b>파이썬 라이브러리</b><small>데이터 처리</small></span>
+        </label>
+        <label class="tech-option">
+          <input type="checkbox" name="tech" value="gTTS">
+          <span><b>gTTS</b><small>텍스트 음성 변환</small></span>
+        </label>
+        <label class="tech-option">
+          <input type="checkbox" name="tech" value="기타">
+          <span><b>기타 기술</b><small>직접 입력</small></span>
+        </label>
+      </div>
+
+      <div id="techDetails" class="tech-details"></div>
+
+      <div class="divider"></div>
+
+      <div class="section-heading">
+        <div>
+          <span class="step">STEP 04</span>
+          <h2>최종 기획서</h2>
+          <p>입력한 내용을 한눈에 확인하고 다운로드하세요.</p>
+        </div>
+      </div>
+
+      <div class="preview-actions">
+        <button class="btn btn-outline" id="previewBtn">미리보기 새로고침</button>
+        <button class="btn btn-primary" id="downloadJson">JSON 다운로드</button>
+      </div>
+
+    </section>
+
+    <!-- 미리보기 영역 -->
+    <aside class="preview-panel">
+      <div class="preview-header">
+        <div>
+          <span class="step">LIVE PREVIEW</span>
+          <h2>프로젝트 기획서</h2>
+        </div>
+        <span class="live-indicator">● LIVE</span>
+      </div>
+
+      <div id="previewContent" class="preview-content"></div>
+
+      <div class="preview-footer">
+        <span>Service Planner</span>
+        <span>PROJECT DOCUMENT</span>
+      </div>
+    </aside>
+
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2026 Service Planner. Built with HTML, CSS & JavaScript.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
